@@ -8,17 +8,24 @@
     \brief namespace to differ from std
 */
 namespace sc{
-	
-	/*! \class Vector
+
+
+	/*! \class list
     	\brief means like std::vector
 
-    	With this class we try to implement our own vector.
+    	With this class we try to implement our own vector, but with linked lists.
 	*/
 	template< typename T >
-	class vector{
+	class list{
+		private:
+			struct node{
+				T data;
+				node* next;
+				node* prev;
+			};
 
 		protected:
-			//=== Alias
+			//=== Alias +
 			typedef size_t size_type; //!< Type of size.
 			static constexpr size_type initial_capacity=0; //!< Default value is 0.
 			static constexpr size_type initial_size=0; //!< Default value is 0.
@@ -28,46 +35,117 @@ namespace sc{
 
 			//=== Constructors
 			/// Default constructor
-			vector( )
-				: m_capacity{initial_capacity}, m_size{initial_size}, arr{new T[initial_capacity]}
+			list( )
+				: m_capacity{initial_capacity}, m_size{initial_size}, m{new node}, s{m}, h{m}
 			{/*empty*/}
 
 			/// Constructor with a defined size
-			explicit vector( size_type count )
-				: m_capacity{count}, m_size{initial_size}, arr{new T[count]}
-			{/*empty*/}
+			explicit list( size_type count )
+				: m_capacity{count}, m_size{initial_size}, m{new node}, s{m}, h{m}
+			{
+				for(size_type i{0u} ; i < count ; i++)
+				{
+					m = new node;
+					m->prev = s;
+					s->next = m;
+					s = s->next;
+					m->next = NULL;
+				}	
+			}
 
 			/// Constructor with elements in [first, last) range.
 			template< typename InputIt >
-			vector( InputIt first, InputIt last )
-				: m_capacity{(size_type)(last - first)}, m_size{(size_type)(last - first)}, arr{new T[m_capacity]}
+			list( InputIt first, InputIt last )
+				: m_capacity{(size_type)(last - first)}, m_size{(size_type)(last - first)}, m{new node}, s{m}, h{m}
 			{
-				size_type count{0};
+				m->data = *(first);
 				while(first != last)
-					arr[count++] = *(first++);
+				{
+					m = new node;
+					m->prev = s;
+					s->next = m;
+					s = s->next;
+					m->next = NULL;
+					m->data = *(first++);
+				}
 			}
 
 			/// Copy constructor.
-			vector( const vector& other )
-				: m_capacity{other.capacity()}, m_size{other.size()}, arr{new T[m_capacity]}
+			list( const list& other )
+				: m_capacity{other.capacity()}, m_size{other.size()}, m{new node}, s{m}, h{m}
 			{
+				node* temp;
+				temp = &other;
 				for( size_type i{0u} ; i < m_size ; i++ )
-					arr[i] = other.arr[i];
+				{
+					if(i==0u)
+					{
+						h->data = temp->data;
+						temp = temp->next;
+					}
+					else if(i == 1)
+					{
+						m = new node;
+						m->next = NULL;
+						m->prev = s;
+						s->next = m;
+						m->data = temp->data;
+						temp = temp->next;
+					}
+					else
+					{
+						m = new node;
+						m->next = NULL;
+						s = s->next;
+						m->prev = s;
+						s->next = m;
+						m->data = temp->data;
+						temp = temp->next;
+					}
+				}
 			}
 
 			/// std::initializer_list copy constructor.
-			vector( std::initializer_list<T> ilist )
-				: m_capacity{ilist.size()}, m_size{ilist.size()}, arr{new T[m_capacity]}
+			list( std::initializer_list<T> ilist )
+				: m_capacity{ilist.size()}, m_size{ilist.size()}, m{new node}, s{m}, h{m}
 			{
-				size_type count{0};
-				for( const T& e : ilist )
-					arr[count++] = e;
+				for( size_type i{0u} ; i < m_size ; i++ )
+				{
+					if(i==0u)
+					{
+						h->data = ilist[0];
+					}
+					else if(i == 1)
+					{
+						m = new node;
+						m->next = NULL;
+						m->prev = s;
+						s->next = m;
+						m->data = ilist[1];
+					}
+					else
+					{
+						m = new node;
+						m->next = NULL;
+						s = s->next;
+						m->prev = s;
+						s->next = m;
+						m->data = ilist[i];
+					}
+				}
 			}
 
 			/// Destructor.
-			~vector( )
+			~list( )
 			{
-				delete arr;
+				while(s!=h)
+				{
+					delete m;
+					m = s;
+					s = s->prev;
+				}
+				delete m;
+				m = s;
 			}
 
 			//=== Iterators
@@ -78,14 +156,14 @@ namespace sc{
 				return iter;
 			}
 
-			/// Returns a constant iterator pointing to the first item in the list.
+			/// Returns a iterator pointing to the position just after the last item in the list.
 			my_iterator end()
 			{
 				my_iterator iter(&arr[m_size]);
 				return iter;
 			}
 
-			/// Returns an iterator pointing to the position just after the last element of the list.
+			/// Returns a constant iterator pointing to the first element of the list.
 			my_iterator cbegin() const
 			{
 				my_const_iterator iter(&arr[0]);	
@@ -130,7 +208,7 @@ namespace sc{
 						reserve( 1 );
 				}
 
-				vector<T> aux = *this;
+				list<T> aux = *this;
 				delete arr;
 
 				arr = new T[m_capacity];
@@ -164,7 +242,7 @@ namespace sc{
 			/// Removes the object at the front of the list.
 			void pop_front( )
 			{
-				vector<T> aux = *this;
+				list<T> aux = *this;
 				delete arr;
 
 				this->m_size--;
@@ -227,7 +305,7 @@ namespace sc{
 				if( new_cap <= m_capacity )
 					return;
 
-				vector<T> aux = *this;
+				list<T> aux = *this;
 
 				delete arr;
 				this->m_capacity = new_cap;
@@ -243,7 +321,7 @@ namespace sc{
 				if( m_size == m_capacity )
 					return;
 
-				vector<T> aux = *this;
+				list<T> aux = *this;
 				
 				delete arr;
 				this->m_capacity = m_size;
@@ -256,7 +334,7 @@ namespace sc{
 		public:
 			//=== Operators overload
 			/// Operator= overload for vectors
-			vector& operator=( const vector& other )
+			list& operator=( const list& other )
 			{
 				if( m_size != initial_size )
 					delete arr;
@@ -272,7 +350,7 @@ namespace sc{
 			}
 
 			/// Operator= overload for initializer_list
-			vector& operator=( std::initializer_list<T> ilist )
+			list& operator=( std::initializer_list<T> ilist )
 			{
 				if( m_size != initial_size )
 					delete arr;
@@ -289,7 +367,7 @@ namespace sc{
 			}
 
 			/// Operator== overload for vectors comparison
-			bool operator==( const vector& rhs )
+			bool operator==( const list& rhs )
 			{
 				if( this->m_size == rhs.size() )
 				{
@@ -303,7 +381,7 @@ namespace sc{
 			}
 
 			/// Operator!= overload for vectors comparison
-			bool operator!=( const vector& rhs )
+			bool operator!=( const list& rhs )
 			{
 				if( this->m_size == rhs.size() )
 				{
@@ -320,7 +398,7 @@ namespace sc{
 			/// Adds value into the list before pos. Returns an iterator to the position of the inserted item.
 			my_iterator insert ( my_iterator pos, const T & value )
 			{
-				vector<T> aux = *this;
+				list<T> aux = *this;
 				size_type range_size = 1; 
 				size_type posi = pos - arr;
 				size_type total_size = (size_type)(m_size + range_size);
@@ -343,7 +421,7 @@ namespace sc{
 			template< typename InItr >
 			my_iterator insert( my_iterator pos, InItr first, InItr last )
 			{
-				vector<T> aux = *this;
+				list<T> aux = *this;
 				size_type range_size = last-first; 
 				size_type posi = pos - arr;
 				size_type total_size = (size_type)(m_size + range_size);
@@ -368,7 +446,7 @@ namespace sc{
 			/// Inserts elements from the initializer list ilist before pos.
 			my_iterator insert( my_iterator pos, std::initializer_list< T > ilist )
 			{
-				vector<T> aux = *this;
+				list<T> aux = *this;
 				size_type range_size = ilist.size(); 
 				size_type posi = pos - arr;
 				size_type total_size = (size_type)(m_size + range_size);
@@ -457,9 +535,11 @@ namespace sc{
 			
 			
 		protected:
-			size_type m_capacity; //!< capacity of the array (alocated memory).
-			size_type m_size; //!< size of the array.
-			T * arr; //!< T type array pointer.
+			size_type m_capacity; //!< capacity of the list (alocated memory). +
+			size_type m_size; //!< size of the list. +
+			node* s; //!< Secondary node pointer. +
+			node* h; //!< Head node pointer. +
+			node* m; //!< Main node pointer. +
 		
 		public:
 
@@ -653,7 +733,7 @@ namespace sc{
 				{ return it != it2.it; }
 		}; // class my_iterator
 		
-	}; // class vector
+	}; // class list
 
 } // namespace sc
 
