@@ -25,7 +25,7 @@ namespace sc{
 			};
 
 		protected:
-			//=== Alias +
+			//=== Alias
 			typedef size_t size_type; //!< Type of size.
 			static constexpr size_type initial_capacity=0; //!< Default value is 0.
 			static constexpr size_type initial_size=0; //!< Default value is 0.
@@ -34,12 +34,12 @@ namespace sc{
 			class my_iterator;
 
 			//=== Constructors
-			/// Default constructor
+			/// Default constructor.
 			list( )
 				: m_capacity{initial_capacity}, m_size{initial_size}, m{new node}, s{m}, h{m}
 			{/*empty*/}
 
-			/// Constructor with a defined size
+			/// Constructor with a defined capacity.
 			explicit list( size_type count )
 				: m_capacity{count}, m_size{initial_size}, m{new node}, s{m}, h{m}
 			{
@@ -149,48 +149,57 @@ namespace sc{
 			}
 
 			//=== Iterators
-			/// Returns an iterator pointing to the first item in the list
+			/// Returns an iterator pointing to the first item in the list.
 			my_iterator begin()
 			{
-				my_iterator iter(&arr[0]);
+				my_iterator iter(h);
 				return iter;
 			}
 
 			/// Returns a iterator pointing to the position just after the last item in the list.
 			my_iterator end()
 			{
-				my_iterator iter(&arr[m_size]);
+				my_iterator iter(m);
 				return iter;
 			}
 
 			/// Returns a constant iterator pointing to the first element of the list.
 			my_iterator cbegin() const
 			{
-				my_const_iterator iter(&arr[0]);	
+				my_const_iterator iter(h);
 				return iter;
 			}
 
 			/// Returns a constant iterator pointing to the position just after the last element of the list.
 			my_iterator cend() const
 			{
-				my_const_iterator iter(&arr[m_size]);
+				my_const_iterator iter(m);
 				return iter;	
 			}
 
 
 		public:
 			//=== Methods
-			/// Returns the size of array.
+			/// Returns the size of the list.
 			size_type size( ) const
 			{return this->m_size;}
 
 			/// Delete all array elements.
 			void clear( )
 			{
-				delete arr;
+				int count{0};
+
+				while(s!=h)
+				{
+					delete m;
+					m = s;
+					s = s->prev;
+				}
+				delete m;
+				m = s;
 
 				this->m_size = initial_size;
-				this->arr = new T[m_capacity];
+				list(m_capacity);
 			}
 
 			/// Checks if the array is empty.
@@ -535,11 +544,11 @@ namespace sc{
 			
 			
 		protected:
-			size_type m_capacity; //!< capacity of the list (alocated memory). +
-			size_type m_size; //!< size of the list. +
-			node* s; //!< Secondary node pointer. +
-			node* h; //!< Head node pointer. +
-			node* m; //!< Main node pointer. +
+			size_type m_capacity; //!< capacity of the list (alocated memory).
+			size_type m_size; //!< size of the list.
+			node* s; //!< Secondary node pointer.
+			node* h; //!< Head node pointer.
+			node* m; //!< Main node pointer.
 		
 		public:
 
