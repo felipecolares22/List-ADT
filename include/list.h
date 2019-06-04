@@ -1,5 +1,5 @@
-#ifndef VECTOR_H
-#define VECTOR_H
+#ifndef LIST_H
+#define LIST_H
 
 #include <iostream>
 #include <stdexcept>
