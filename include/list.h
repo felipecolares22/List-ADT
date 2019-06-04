@@ -97,7 +97,7 @@ namespace sc{
 				tail->next = new node;
 				tail->next->prev = tail;
 				tail = tail->next;
-				taiol->next = NULL;
+				tail->next = NULL;
 			}
 
 			/// std::initializer_list copy constructor.
