@@ -352,22 +352,29 @@ namespace sc{
 				return *this;
 			}
 
-			// /// Operator= overload for initializer_list
-			// list& operator=( std::initializer_list<T> ilist )
-			// {
-			// 	if( m_size != initial_size )
-			// 		delete arr;
+			/// Operator= overload for initializer_list
+			list& operator=( std::initializer_list<T> ilist )
+			{
+				Node * fast = head->next;
+				for( const T& e : ilist)
+				{
+					if( fast == tail )
+					{
+						tail->next = new Node;
+						tail->next->prev = tail;
+						tail = tail->next;
+						tail->next = nullptr;
+					}
 
-			// 	this->m_capacity = ilist.size() * 2;
-			// 	this->m_size = ilist.size();
-			// 	this->arr = new T[m_capacity];
+					fast->data = e;
+					
+					fast = fast->next;
+				}
 
-			// 	size_type count{0};
-			// 	for( const T& e : ilist )
-			// 		arr[count++] = e;
+				this->m_size = ilist.size();
 
-			// 	return *this;
-			// }
+				return *this;
+			}
 
 	// 		/// Operator== overload for vectors comparison
 	// 		bool operator==( const list& rhs )

@@ -150,10 +150,11 @@ int main( void )
         std::cout << ">>> Passed!\n\n";
     }
 #endif
-/*
+
     {
         std::cout << ">>> Unit teste #" << ++n_unit << ": initializer list assignment.\n";
-        sc::list<int> seq = { 1, 2, 3, 4, 5 };
+        sc::list<int> seq;
+        seq = { 1, 2, 3, 4, 5 };
 
         assert( seq.size() == 5 );
         assert( seq.empty() == false );
@@ -165,7 +166,7 @@ int main( void )
 
         std::cout << ">>> Passed!\n\n";
     }
-
+/*
     {
         std::cout << ">>> Unit teste #" << ++n_unit << ": clear().\n";
         sc::list<int> seq { 1, 2, 3, 4, 5 };
