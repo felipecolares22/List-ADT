@@ -18,21 +18,19 @@ namespace sc{
 	template< typename T >
 	class list{
 		private:
-			struct node{
+			struct Node{
 				T data;
-				node* next;
-				node* prev;
+				Node* next;
+				Node* prev;
 			};
 
-			size_type m_capacity; //!< capacity of the list (alocated memory).
 			size_type m_size; //!< size of the list.
-			node * head; //!< Head node pointer.
-			node * tail; //!< Tail node pointer.
+			Node * head; //!< Head Node pointer.
+			Node * tail; //!< Tail Node pointer.
 
 		protected:
 			//=== Alias
 			typedef size_t size_type; //!< Type of size.
-			static constexpr size_type initial_capacity=0; //!< Default value is 0.
 			static constexpr size_type initial_size=0; //!< Default value is 0.
 
 		public:
@@ -41,81 +39,94 @@ namespace sc{
 			//=== Constructors
 			/// Default constructor.
 			list( )
-				: m_capacity{initial_capacity}, m_size{initial_size}, head{new node}, tail{new node}
+				: m_size{initial_size}, head{new Node}, tail{new Node}
 			{
 				head->next = tail;
-				tail->next = head;
+				head->prev = nullptr;
+				tail->prev = head;
+				tail->next = nullptr;
 			}
 
 			/// Constructor with a defined capacity.
 			explicit list( size_type count )
-				: m_capacity{count}, m_size{initial_size}, head{new node}, tail{head}
-			{
-				for(size_type i{0u} ; i <= count+1 ; i++)
+				: m_size{count}, head{new Node}, tail{new Node}
+			{	
+				head->prev = nullptr;
+				tail->next = nullptr;
+
+				Node * fast = head;
+				Node * temp;
+				for(size_type i{0u} ; i < count ; i++)
 				{
-					tail->next = new node;
-					tail->next->prev = tail;
-					tail = tail->next;
-					tail->next = NULL;
+					temp = new Node;
+					temp->data = 0;
+
+					fast->next = temp;
+					temp->prev = fast;
+
+					fast = fast->next;
 				}
+
+				tail->prev = fast;
+				fast->next = tail;
 			}
 
 			/// Constructor with elements in [first, last) range.
 			template< typename InputIt >
 			list( InputIt first, InputIt last )
-				: m_capacity{(size_type)(last - first)}, m_size{(size_type)(last - first)}, head{new node}, tail{head}
+				: m_capacity{(size_type)(last - first)}, m_size{(size_type)(last - first)}, head{new Node}, tail{head}
 			{
 				while(first != last)
 				{
-					tail->next = new node;
+					tail->next = new Node;
 					tail->next->prev = tail;
 					tail = tail->next
-					tail->next = NULL;
+					tail->next = nullptr;
 					tail->data = *(first++);
 				}
-				tail->next = new node;
+				tail->next = new Node;
 				tail->next->prev = tail;
 				tail = tail->next;
-				tail->next = NULL;
+				tail->next = nullptr;
 			}
 
 			/// Copy constructor.
 			list( const list& other )
-				: m_capacity{other.capacity()}, m_size{other.size()}, head{new node}, tail{head}
+				: m_capacity{other.capacity()}, m_size{other.size()}, head{new Node}, tail{head}
 			{
-				node* temp;
+				Node* temp;
 				temp = &other;
 				for( size_type i{0u} ; i <= m_size ; i++ )
 				{
-					tail->next = new node;
+					tail->next = new Node;
 					tail->next->prev = tail;
 					tail = tail->next;
-					tail->next = NULL;
+					tail->next = nullptr;
 					tail->data = temp->data;
 					temp = temp->next;
 				}
-				tail->next = new node;
+				tail->next = new Node;
 				tail->next->prev = tail;
 				tail = tail->next;
-				tail->next = NULL;
+				tail->next = nullptr;
 			}
 
 			/// std::initializer_list copy constructor.
 			list( std::initializer_list<T> ilist )
-				: m_capacity{ilist.size()}, m_size{ilist.size()}, head{new node}, tail{head}
+				: m_capacity{ilist.size()}, m_size{ilist.size()}, head{new Node}, tail{head}
 			{
 				for( size_type i{0u} ; i <= m_size ; i++ )
 				{
-						tail->next = new node;
+						tail->next = new Node;
 						tail->next->prev = tail;
 						tail = tail->next;
-						tail->next = NULL;
+						tail->next = nullptr;
 						tail->data = ilist[i];
 				}
-				tail->next = new node;
+				tail->next = new Node;
 				tail->next->prev = tail;
 				tail = tail->next;
-				tail->next = NULL;
+				tail->next = nullptr;
 			}
 
 			/// Destructor.
@@ -194,10 +205,10 @@ namespace sc{
 				}
 
 				head->data = value;
-				head->prev = new node;
+				head->prev = new Node;
 				head->prev->next = head;
 				head = head->prev;
-				head->prev = NULL;
+				head->prev = nullptr;
 				m_size++;
 			}
 
@@ -213,10 +224,10 @@ namespace sc{
 				}
 				
 				tail->data = value;
-				tail->next = new node;
+				tail->next = new Node;
 				tail->next->prev = tail;
 				tail = tail->next;
-				tail->next = NULL;
+				tail->next = nullptr;
 				m_size++;
 			}
 			
