@@ -24,6 +24,12 @@ namespace sc{
 				node* prev;
 			};
 
+			size_type m_capacity; //!< capacity of the list (alocated memory).
+			size_type m_size; //!< size of the list.
+			node* s; //!< Secondary node pointer.
+			node* h; //!< Head node pointer.
+			node* m; //!< Main node pointer.
+
 		protected:
 			//=== Alias
 			typedef size_t size_type; //!< Type of size.
@@ -542,205 +548,198 @@ namespace sc{
 					arr[count++] = e;
 			}
 			
-			
-		protected:
-			size_type m_capacity; //!< capacity of the list (alocated memory).
-			size_type m_size; //!< size of the list.
-			node* s; //!< Secondary node pointer.
-			node* h; //!< Head node pointer.
-			node* m; //!< Main node pointer.
 		
-		public:
+		// public:
 
-		/*! \class my_iterator
+		// /*! \class my_iterator
 			
-			With this class we're trying to implement an iterator class for vectors.
-		*/
-		class my_iterator{
-			private:
-				T * it; //!< Iterator pointer
-				typedef my_iterator iterator; 
+		// 	With this class we're trying to implement an iterator class for vectors.
+		// */
+		// class my_iterator{
+		// 	private:
+		// 		T * it; //!< Iterator pointer
+		// 		typedef my_iterator iterator; 
 
-			public:
-				//=== Alias
-				typedef size_t size_type; //!< Type of size.
+		// 	public:
+		// 		//=== Alias
+		// 		typedef size_t size_type; //!< Type of size.
 				
-				//=== Constructor
-				my_iterator(T* it)
-					:it{it}
-				{/*empty*/}
+		// 		//=== Constructor
+		// 		my_iterator(T* it)
+		// 			:it{it}
+		// 		{/*empty*/}
 
-				//=== Destructor
-				~my_iterator()
-				{/*empty*/}
+		// 		//=== Destructor
+		// 		~my_iterator()
+		// 		{/*empty*/}
 
 				
 
-			public:
-				//=== Operators
-				iterator operator++(void)
-				{ return iterator( ++it ); }
+		// 	public:
+		// 		//=== Operators
+		// 		iterator operator++(void)
+		// 		{ return iterator( ++it ); }
 
-				iterator operator++(int)
-				{ 
-					iterator temp( it );
-					it++;
-					return temp;
-				}
+		// 		iterator operator++(int)
+		// 		{ 
+		// 			iterator temp( it );
+		// 			it++;
+		// 			return temp;
+		// 		}
 
-				T& operator*()
-				{ return *it; }
+		// 		T& operator*()
+		// 		{ return *it; }
 
-				iterator operator--(void)
-				{ return iterator( --it ); }
+		// 		iterator operator--(void)
+		// 		{ return iterator( --it ); }
 
-				iterator operator--(int)
-				{
-					iterator temp( it );
-					it--;
-					return temp;
-				}
+		// 		iterator operator--(int)
+		// 		{
+		// 			iterator temp( it );
+		// 			it--;
+		// 			return temp;
+		// 		}
 
-				friend iterator operator+(int n, iterator it)
-				{
-					for( int i = 0 ; i < n ; i++ )
-						it++;
-					return iterator( it );
-				}
+		// 		friend iterator operator+(int n, iterator it)
+		// 		{
+		// 			for( int i = 0 ; i < n ; i++ )
+		// 				it++;
+		// 			return iterator( it );
+		// 		}
 
-				friend iterator operator+(iterator it, int n)
-				{
-					for( int i = 0 ; i < n ; i++ )
-						it++;
-					return iterator( it );
-				}
+		// 		friend iterator operator+(iterator it, int n)
+		// 		{
+		// 			for( int i = 0 ; i < n ; i++ )
+		// 				it++;
+		// 			return iterator( it );
+		// 		}
 
-				friend iterator operator-(int n, iterator it)
-				{
-					for( int i = 0 ; i < n ; i++ )
-						it--;
-					return iterator( it );
-				}
+		// 		friend iterator operator-(int n, iterator it)
+		// 		{
+		// 			for( int i = 0 ; i < n ; i++ )
+		// 				it--;
+		// 			return iterator( it );
+		// 		}
 
-				friend iterator operator-(iterator it, int n)
-				{
-					for( int i = 0 ; i < n ; i++ )
-						it--;
-					return iterator( it );
-				}
+		// 		friend iterator operator-(iterator it, int n)
+		// 		{
+		// 			for( int i = 0 ; i < n ; i++ )
+		// 				it--;
+		// 			return iterator( it );
+		// 		}
 
-				friend size_type operator-(iterator it1, iterator it2)
-				{
-					return it1.it - it2.it;
-				}
+		// 		friend size_type operator-(iterator it1, iterator it2)
+		// 		{
+		// 			return it1.it - it2.it;
+		// 		}
 
-				iterator operator->()
-				{
-					return iterator( it );
-				}
+		// 		iterator operator->()
+		// 		{
+		// 			return iterator( it );
+		// 		}
 
-				bool operator==( const iterator& it2) const
-				{ return it == it2.it; }
+		// 		bool operator==( const iterator& it2) const
+		// 		{ return it == it2.it; }
 
-				bool operator!=( const iterator& it2) const
-				{ return it != it2.it; }
-		}; // class my_iterator
+		// 		bool operator!=( const iterator& it2) const
+		// 		{ return it != it2.it; }
+		// }; // class my_iterator
 		
 
-		/*! \class my_constiterator
+		// ! \class my_constiterator
 			
-			With this class we're trying to implement an constant iterator class for vectors.
-		*/
+		// 	With this class we're trying to implement an constant iterator class for vectors.
+		
 
 
-		class my_const_iterator{
-			private:
-				const T * it; //!< Iterator pointer
-				typedef my_const_iterator iterator; 
+		// class my_const_iterator{
+		// 	private:
+		// 		const T * it; //!< Iterator pointer
+		// 		typedef my_const_iterator iterator; 
 
-			public:
-				//=== Alias
-				typedef size_t size_type; //!< Type of size.
+		// 	public:
+		// 		//=== Alias
+		// 		typedef size_t size_type; //!< Type of size.
 				
-				//=== Constructor
-				my_const_iterator(T* it)
-					:it{it}
-				{/*empty*/}
+		// 		//=== Constructor
+		// 		my_const_iterator(T* it)
+		// 			:it{it}
+		// 		{/*empty*/}
 
-				//=== Destructor
-				~my_const_iterator()
-				{/*empty*/}
+		// 		//=== Destructor
+		// 		~my_const_iterator()
+		// 		{/*empty*/}
 
 				
 
-			public:
-				//=== Operators
-				const iterator operator++(void)
-				{ return iterator( ++it ); }
+		// 	public:
+		// 		//=== Operators
+		// 		const iterator operator++(void)
+		// 		{ return iterator( ++it ); }
 
-				const iterator operator++(int)
-				{ 
-					iterator temp( it );
-					it++;
-					return temp;
-				}
+		// 		const iterator operator++(int)
+		// 		{ 
+		// 			iterator temp( it );
+		// 			it++;
+		// 			return temp;
+		// 		}
 
-				const T& operator*()
-				{ return *it; }
+		// 		const T& operator*()
+		// 		{ return *it; }
 
-				const iterator operator--(void)
-				{ return iterator( --it ); }
+		// 		const iterator operator--(void)
+		// 		{ return iterator( --it ); }
 
-				const iterator operator--(int)
-				{
-					iterator temp( it );
-					it--;
-					return temp;
-				}
+		// 		const iterator operator--(int)
+		// 		{
+		// 			iterator temp( it );
+		// 			it--;
+		// 			return temp;
+		// 		}
 
-				friend const iterator operator+(int n, iterator it)
-				{
-					for( int i = 0 ; i < n ; i++ )
-						it++;
-					return iterator( it );
-				}
+		// 		friend const iterator operator+(int n, iterator it)
+		// 		{
+		// 			for( int i = 0 ; i < n ; i++ )
+		// 				it++;
+		// 			return iterator( it );
+		// 		}
 
-				friend const iterator operator+(iterator it, int n)
-				{
-					for( int i = 0 ; i < n ; i++ )
-						it++;
-					return iterator( it );
-				}
+		// 		friend const iterator operator+(iterator it, int n)
+		// 		{
+		// 			for( int i = 0 ; i < n ; i++ )
+		// 				it++;
+		// 			return iterator( it );
+		// 		}
 
-				friend const iterator operator-(int n, iterator it)
-				{
-					for( int i = 0 ; i < n ; i++ )
-						it--;
-					return iterator( it );
-				}
+		// 		friend const iterator operator-(int n, iterator it)
+		// 		{
+		// 			for( int i = 0 ; i < n ; i++ )
+		// 				it--;
+		// 			return iterator( it );
+		// 		}
 
-				friend const iterator operator-(iterator it, int n)
-				{
-					for( int i = 0 ; i < n ; i++ )
-						it--;
-					return iterator( it );
-				}
+		// 		friend const iterator operator-(iterator it, int n)
+		// 		{
+		// 			for( int i = 0 ; i < n ; i++ )
+		// 				it--;
+		// 			return iterator( it );
+		// 		}
 
-				friend const size_type operator-(iterator it1, iterator it2)
-				{
-					return it1.it - it2.it;
-				}
+		// 		friend const size_type operator-(iterator it1, iterator it2)
+		// 		{
+		// 			return it1.it - it2.it;
+		// 		}
 
-				const iterator operator->()
-				{
-					return iterator( it );
-				}
-				const bool operator==( const iterator& it2) const
-				{ return it == it2.it; }
+		// 		const iterator operator->()
+		// 		{
+		// 			return iterator( it );
+		// 		}
+		// 		const bool operator==( const iterator& it2) const
+		// 		{ return it == it2.it; }
 
-				const bool operator!=( const iterator& it2) const
-				{ return it != it2.it; }
-		}; // class my_iterator
+		// 		const bool operator!=( const iterator& it2) const
+		// 		{ return it != it2.it; }
+		// }; // class my_iterator
 		
 	}; // class list
 
