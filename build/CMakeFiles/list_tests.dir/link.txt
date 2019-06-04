@@ -1,1 +1,0 @@
-/usr/bin/c++   -Wall   CMakeFiles/list_tests.dir/test/tests.cpp.o  -o list_tests /usr/lib/x86_64-linux-gnu/libgtest.a libmy_list.a -lpthread 
