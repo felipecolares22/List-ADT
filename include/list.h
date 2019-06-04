@@ -26,8 +26,8 @@ namespace sc{
 
 			size_type m_capacity; //!< capacity of the list (alocated memory).
 			size_type m_size; //!< size of the list.
-			node* h; //!< Head node pointer.
-			node* t; //!< Tail node pointer.
+			node * head; //!< Head node pointer.
+			node * tail; //!< Tail node pointer.
 
 		protected:
 			//=== Alias
@@ -41,12 +41,12 @@ namespace sc{
 			//=== Constructors
 			/// Default constructor.
 			list( )
-				: m_capacity{initial_capacity}, m_size{initial_size}, t{new node}, h{t}
+				: m_capacity{initial_capacity}, m_size{initial_size}, tail{new node}, head{tail}
 			{/*empty*/}
 
 			/// Constructor with a defined capacity.
 			explicit list( size_type count )
-				: m_capacity{count}, m_size{initial_size}, t{new node}, h{t}
+				: m_capacity{count}, m_size{initial_size}, tail{new node}, head{tail}
 			{
 				for(size_type i{0u} ; i < count ; i++)
 				{
@@ -60,7 +60,7 @@ namespace sc{
 			/// Constructor with elements in [first, last) range.
 			template< typename InputIt >
 			list( InputIt first, InputIt last )
-				: m_capacity{(size_type)(last - first)}, m_size{(size_type)(last - first)}, t{new node}, h{t}
+				: m_capacity{(size_type)(last - first)}, m_size{(size_type)(last - first)}, t{new node}, head{t}
 			{
 				t->data = *(first++);
 				while(first != last)
@@ -75,7 +75,7 @@ namespace sc{
 
 			/// Copy constructor.
 			list( const list& other )
-				: m_capacity{other.capacity()}, m_size{other.size()}, t{new node}, h{t}
+				: m_capacity{other.capacity()}, m_size{other.size()}, t{new node}, head{t}
 			{
 				node* temp;
 				temp = &other;
@@ -83,7 +83,7 @@ namespace sc{
 				{
 					if(i==0u)
 					{
-						h->data = temp->data;
+						head->data = temp->data;
 						temp = temp->next;
 					}
 					else
@@ -100,13 +100,13 @@ namespace sc{
 
 			/// std::initializer_list copy constructor.
 			list( std::initializer_list<T> ilist )
-				: m_capacity{ilist.size()}, m_size{ilist.size()}, t{new node}, h{t}
+				: m_capacity{ilist.size()}, m_size{ilist.size()}, t{new node}, head{t}
 			{
 				for( size_type i{0u} ; i < m_size ; i++ )
 				{
 					if(i==0u)
 					{
-						h->data = ilist[0];
+						head->data = ilist[0];
 					}
 					else
 					{
@@ -122,7 +122,7 @@ namespace sc{
 			/// Destructor.
 			~list( )
 			{
-				while(t!=h)
+				while(t!=head)
 				{
 					t = t->prev;
 					delete t->next;
@@ -135,7 +135,7 @@ namespace sc{
 			/// Returns an iterator pointing to the first item in the list.
 			my_iterator begin()
 			{
-				my_iterator iter(h);
+				my_iterator iter(head);
 				return iter;
 			}
 
@@ -149,7 +149,7 @@ namespace sc{
 			/// Returns a constant iterator pointing to the first element of the list.
 			my_iterator cbegin() const
 			{
-				my_const_iterator iter(h);
+				my_const_iterator iter(head);
 				return iter;
 			}
 
@@ -170,7 +170,7 @@ namespace sc{
 			/// Delete all array elements.
 			void clear( )
 			{
-				while(t!=h)
+				while(t!=head)
 				{
 					t = t->prev;
 					delete t->next;
