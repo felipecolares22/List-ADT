@@ -78,6 +78,11 @@ namespace sc{
 			list( InputIt first, InputIt last )
 				: m_size{(size_type)(last - first)}, head{new Node}, tail{new Node}
 			{
+				head->prev = nullptr;
+				tail->next = nullptr;
+				head->next = tail;
+				tail->prev = head;
+
 				while(first != last)
 				{
 					tail->next = new Node;
@@ -628,10 +633,16 @@ namespace sc{
 					return iterator( it );
 				}
 
-				// friend size_type operator-(iterator it1, iterator it2)
-				// {
-				// 	return it1.it - it2.it;
-				// }
+				friend size_type operator-(iterator it1, iterator it2)
+				{
+					size_t count = 0;
+					while( it2 != it1 )
+					{
+						count++;
+						it2++;
+					}
+					return count;
+				}
 
 				Node * operator->()
 				{
