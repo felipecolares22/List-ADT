@@ -26,9 +26,8 @@ namespace sc{
 
 			size_type m_capacity; //!< capacity of the list (alocated memory).
 			size_type m_size; //!< size of the list.
-			node* s; //!< Secondary node pointer.
 			node* h; //!< Head node pointer.
-			node* m; //!< Main node pointer.
+			node* t; //!< Tail node pointer.
 
 		protected:
 			//=== Alias
@@ -42,43 +41,41 @@ namespace sc{
 			//=== Constructors
 			/// Default constructor.
 			list( )
-				: m_capacity{initial_capacity}, m_size{initial_size}, m{new node}, s{m}, h{m}
+				: m_capacity{initial_capacity}, m_size{initial_size}, t{new node}, h{t}
 			{/*empty*/}
 
 			/// Constructor with a defined capacity.
 			explicit list( size_type count )
-				: m_capacity{count}, m_size{initial_size}, m{new node}, s{m}, h{m}
+				: m_capacity{count}, m_size{initial_size}, t{new node}, h{t}
 			{
 				for(size_type i{0u} ; i < count ; i++)
 				{
-					m = new node;
-					m->prev = s;
-					s->next = m;
-					s = s->next;
-					m->next = NULL;
-				}	
+					t->next = new node;
+					t->next->prev = t;
+					t = t->next;
+					t->next = NULL;
+				}
 			}
 
 			/// Constructor with elements in [first, last) range.
 			template< typename InputIt >
 			list( InputIt first, InputIt last )
-				: m_capacity{(size_type)(last - first)}, m_size{(size_type)(last - first)}, m{new node}, s{m}, h{m}
+				: m_capacity{(size_type)(last - first)}, m_size{(size_type)(last - first)}, t{new node}, h{t}
 			{
-				m->data = *(first);
+				t->data = *(first++);
 				while(first != last)
 				{
-					m = new node;
-					m->prev = s;
-					s->next = m;
-					s = s->next;
-					m->next = NULL;
-					m->data = *(first++);
+					t->next = new node;
+					t->next->prev = t;
+					t = t->next
+					t->next = NULL;
+					t->data = *(first++);
 				}
 			}
 
 			/// Copy constructor.
 			list( const list& other )
-				: m_capacity{other.capacity()}, m_size{other.size()}, m{new node}, s{m}, h{m}
+				: m_capacity{other.capacity()}, m_size{other.size()}, t{new node}, h{t}
 			{
 				node* temp;
 				temp = &other;
@@ -89,23 +86,13 @@ namespace sc{
 						h->data = temp->data;
 						temp = temp->next;
 					}
-					else if(i == 1)
-					{
-						m = new node;
-						m->next = NULL;
-						m->prev = s;
-						s->next = m;
-						m->data = temp->data;
-						temp = temp->next;
-					}
 					else
 					{
-						m = new node;
-						m->next = NULL;
-						s = s->next;
-						m->prev = s;
-						s->next = m;
-						m->data = temp->data;
+						t->next = new node;
+						t->next->prev = t;
+						t = t->next;
+						t->next = NULL;
+						t->data = temp->data;
 						temp = temp->next;
 					}
 				}
@@ -113,7 +100,7 @@ namespace sc{
 
 			/// std::initializer_list copy constructor.
 			list( std::initializer_list<T> ilist )
-				: m_capacity{ilist.size()}, m_size{ilist.size()}, m{new node}, s{m}, h{m}
+				: m_capacity{ilist.size()}, m_size{ilist.size()}, t{new node}, h{t}
 			{
 				for( size_type i{0u} ; i < m_size ; i++ )
 				{
@@ -121,22 +108,13 @@ namespace sc{
 					{
 						h->data = ilist[0];
 					}
-					else if(i == 1)
-					{
-						m = new node;
-						m->next = NULL;
-						m->prev = s;
-						s->next = m;
-						m->data = ilist[1];
-					}
 					else
 					{
-						m = new node;
-						m->next = NULL;
-						s = s->next;
-						m->prev = s;
-						s->next = m;
-						m->data = ilist[i];
+						t->next = new node;
+						t->next->prev = t;
+						t = t->next;
+						t->next = NULL;
+						t->data = ilist[i];
 					}
 				}
 			}
@@ -144,14 +122,13 @@ namespace sc{
 			/// Destructor.
 			~list( )
 			{
-				while(s!=h)
+				while(t!=h)
 				{
-					delete m;
-					m = s;
-					s = s->prev;
+					t = t->prev;
+					delete t->next;
 				}
-				delete m;
-				m = s;
+				t = t->prev;
+				delete t->next;
 			}
 
 			//=== Iterators
@@ -165,7 +142,7 @@ namespace sc{
 			/// Returns a iterator pointing to the position just after the last item in the list.
 			my_iterator end()
 			{
-				my_iterator iter(m);
+				my_iterator iter(t);
 				return iter;
 			}
 
@@ -179,8 +156,8 @@ namespace sc{
 			/// Returns a constant iterator pointing to the position just after the last element of the list.
 			my_iterator cend() const
 			{
-				my_const_iterator iter(m);
-				return iter;	
+				my_const_iterator iter(t);
+				return iter;
 			}
 
 
@@ -193,19 +170,15 @@ namespace sc{
 			/// Delete all array elements.
 			void clear( )
 			{
-				int count{0};
-
-				while(s!=h)
+				while(t!=h)
 				{
-					delete m;
-					m = s;
-					s = s->prev;
+					t = t->prev;
+					delete t->next;
 				}
-				delete m;
-				m = s;
+				t = t->prev;
+				delete t->next;
 
 				this->m_size = initial_size;
-				list(m_capacity);
 			}
 
 			/// Checks if the array is empty.
@@ -243,8 +216,11 @@ namespace sc{
 					else
 						reserve( 1 );
 				}
-
-				arr[m_size] = value;
+				
+				t->next = new node;
+				t->next->prev = t;
+				t = t->next;
+				t->data = value;
 				m_size++;
 			}
 			
