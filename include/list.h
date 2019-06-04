@@ -41,94 +41,92 @@ namespace sc{
 			//=== Constructors
 			/// Default constructor.
 			list( )
-				: m_capacity{initial_capacity}, m_size{initial_size}, tail{new node}, head{tail}
-			{/*empty*/}
+				: m_capacity{initial_capacity}, m_size{initial_size}, head{new node}, tail{new node}
+			{
+				head->next = tail;
+				tail->next = head;
+			}
 
 			/// Constructor with a defined capacity.
 			explicit list( size_type count )
-				: m_capacity{count}, m_size{initial_size}, tail{new node}, head{tail}
+				: m_capacity{count}, m_size{initial_size}, head{new node}, tail{head}
 			{
-				for(size_type i{0u} ; i < count ; i++)
+				for(size_type i{0u} ; i <= count+1 ; i++)
 				{
-					t->next = new node;
-					t->next->prev = t;
-					t = t->next;
-					t->next = NULL;
+					tail->next = new node;
+					tail->next->prev = tail;
+					tail = tail->next;
+					tail->next = NULL;
 				}
 			}
 
 			/// Constructor with elements in [first, last) range.
 			template< typename InputIt >
 			list( InputIt first, InputIt last )
-				: m_capacity{(size_type)(last - first)}, m_size{(size_type)(last - first)}, t{new node}, head{t}
+				: m_capacity{(size_type)(last - first)}, m_size{(size_type)(last - first)}, head{new node}, tail{head}
 			{
-				t->data = *(first++);
 				while(first != last)
 				{
-					t->next = new node;
-					t->next->prev = t;
-					t = t->next
-					t->next = NULL;
-					t->data = *(first++);
+					tail->next = new node;
+					tail->next->prev = tail;
+					tail = tail->next
+					tail->next = NULL;
+					tail->data = *(first++);
 				}
+				tail->next = new node;
+				tail->next->prev = tail;
+				tail = tail->next;
+				tail->next = NULL;
 			}
 
 			/// Copy constructor.
 			list( const list& other )
-				: m_capacity{other.capacity()}, m_size{other.size()}, t{new node}, head{t}
+				: m_capacity{other.capacity()}, m_size{other.size()}, head{new node}, tail{head}
 			{
 				node* temp;
 				temp = &other;
-				for( size_type i{0u} ; i < m_size ; i++ )
+				for( size_type i{0u} ; i <= m_size ; i++ )
 				{
-					if(i==0u)
-					{
-						head->data = temp->data;
-						temp = temp->next;
-					}
-					else
-					{
-						t->next = new node;
-						t->next->prev = t;
-						t = t->next;
-						t->next = NULL;
-						t->data = temp->data;
-						temp = temp->next;
-					}
+					tail->next = new node;
+					tail->next->prev = tail;
+					tail = tail->next;
+					tail->next = NULL;
+					tail->data = temp->data;
+					temp = temp->next;
 				}
+				tail->next = new node;
+				tail->next->prev = tail;
+				tail = tail->next;
+				taiol->next = NULL;
 			}
 
 			/// std::initializer_list copy constructor.
 			list( std::initializer_list<T> ilist )
-				: m_capacity{ilist.size()}, m_size{ilist.size()}, t{new node}, head{t}
+				: m_capacity{ilist.size()}, m_size{ilist.size()}, head{new node}, tail{head}
 			{
-				for( size_type i{0u} ; i < m_size ; i++ )
+				for( size_type i{0u} ; i <= m_size ; i++ )
 				{
-					if(i==0u)
-					{
-						head->data = ilist[0];
-					}
-					else
-					{
-						t->next = new node;
-						t->next->prev = t;
-						t = t->next;
-						t->next = NULL;
-						t->data = ilist[i];
-					}
+						tail->next = new node;
+						tail->next->prev = tail;
+						tail = tail->next;
+						tail->next = NULL;
+						tail->data = ilist[i];
 				}
+				tail->next = new node;
+				tail->next->prev = tail;
+				tail = tail->next;
+				tail->next = NULL;
 			}
 
 			/// Destructor.
 			~list( )
 			{
-				while(t!=head)
+				while(tail!=head)
 				{
-					t = t->prev;
-					delete t->next;
+					tail = tail->prev;
+					delete tail->next;
 				}
-				t = t->prev;
-				delete t->next;
+				delete head;
 			}
 
 			//=== Iterators
@@ -142,7 +140,7 @@ namespace sc{
 			/// Returns a iterator pointing to the position just after the last item in the list.
 			my_iterator end()
 			{
-				my_iterator iter(t);
+				my_iterator iter(tail);
 				return iter;
 			}
 
@@ -156,7 +154,7 @@ namespace sc{
 			/// Returns a constant iterator pointing to the position just after the last element of the list.
 			my_iterator cend() const
 			{
-				my_const_iterator iter(t);
+				my_const_iterator iter(tail);
 				return iter;
 			}
 
@@ -170,13 +168,12 @@ namespace sc{
 			/// Delete all array elements.
 			void clear( )
 			{
-				while(t!=head)
+				while(tail!=head)
 				{
-					t = t->prev;
-					delete t->next;
+					tail = tail->prev;
+					delete tail->next;
 				}
-				t = t->prev;
-				delete t->next;
+				delete head;
 
 				this->m_size = initial_size;
 			}
@@ -196,14 +193,12 @@ namespace sc{
 						reserve( 1 );
 				}
 
-				list<T> aux = *this;
-				delete arr;
-
-				arr = new T[m_capacity];
-				arr[0] = value;
+				head->data = value;
+				head->prev = new node;
+				head->prev->next = head;
+				head = head->prev;
+				head->prev = NULL;
 				m_size++;
-				for(size_type i{1u} ; i < m_size ; i++ )
-					arr[i] = aux.arr[i-1];
 			}
 
 			/// Adds value to the end of the list.
@@ -217,10 +212,11 @@ namespace sc{
 						reserve( 1 );
 				}
 				
-				t->next = new node;
-				t->next->prev = t;
-				t = t->next;
-				t->data = value;
+				tail->data = value;
+				tail->next = new node;
+				tail->next->prev = tail;
+				tail = tail->next;
+				tail->next = NULL;
 				m_size++;
 			}
 			
@@ -233,44 +229,32 @@ namespace sc{
 			/// Removes the object at the front of the list.
 			void pop_front( )
 			{
-				list<T> aux = *this;
-				delete arr;
-
-				this->m_size--;
-				this->arr = new T[m_capacity];
-
-				for( size_type i{0u}; i < m_size; i++ )
-				{
-					arr[i] = aux[i+1];
-				}
+				head = head->next;
+				delete head->prev;
+				m_size--;
 			}
 
 			/// Returns the object at the end of the list.
 			const T & back( ) const
 			{
-				return arr[m_size-1];
+				return tail->prev->data;
 			}
 
 			/// Returns the object at the beginning of the list.
 			const T & front( ) const
 			{
-				return arr[0];
+				return head->next->data;
 			}
 
-			/// Replaces the content of the list with count copies of value.
-			void assign( size_type count, const T & value )
+			/// Replaces the content of the list with copies of value.
+			void assign( const T & value )
 			{
-				if( count > m_capacity ){
-					reserve( count );
-					this->m_capacity = count;
+				tail = head->next;
+				for( size_type i{0u} ; i<m_size ; i++ )
+				{
+					tail->data = value;
+					tail = tail->next;
 				}
-
-				delete arr;
-				this->m_size = count;
-				this->arr = new T[m_capacity];
-
-				for( size_type i{0u} ; i < m_size ; i++ )
-					arr[i] = value;
 			}
 
 			/// Return the object at the index position.
