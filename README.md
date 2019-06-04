@@ -1,5 +1,5 @@
-# My Vector
-In this project our objective is to build our version or the std::vector, the sc::vector, but this time, made with linked lists.
+# Abstract Data Type List
+In this project our objective is to build our own version of the std::vector with linked lists, the sc::list.
 
 ### Dependencies
 * `cmake`
@@ -9,7 +9,7 @@ In this project our objective is to build our version or the std::vector, the sc
 * `Doxygen (to gerenate code documentation)`
 
 ### Usage
-To use the library, you will need to import the `vector.h` file located on the `include` folder to your project.Look the documentation for a more detailed explanation of each sc::vector method.
+To use the library, you will need to import the `list.h` file located on the `include` folder to your project. Look the documentation for a more detailed explanation of each sc::list method.
 
 ### Generate Documentation
 Go to your project directory and type
@@ -23,7 +23,7 @@ Then, open in your browser the `index.html` file, located on the `docs/html/` fo
 ### Run Tests
 
 #### Compile
-To test the `sc::vector` library, go to the project directory and type
+To test the `sc::list` library, go to the project directory and type
 
 ```bash
 mkdir build
@@ -33,7 +33,7 @@ make
 ```
 
 #### Run
-Type `./vector_tests` and see the results.
+Type `./list_tests` and see the results.
 
 ## Authorship
 Program developed by [Matheus de Andrade](https://github.com/matheusmas132) and [Felipe Colares](https://github.com/felipecolares22), 2019.1
