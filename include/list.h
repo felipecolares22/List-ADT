@@ -184,18 +184,26 @@ namespace sc{
 			size_type size( ) const
 			{return this->m_size;}
 
-	// 		/// Delete all array elements.
-	// 		void clear( )
-	// 		{
-	// 			while(tail!=head)
-	// 			{
-	// 				tail = tail->prev;
-	// 				delete tail->next;
-	// 			}
-	// 			delete head;
+			/// Delete all array elements.
+			void clear( )
+			{
+				while( tail != head )
+				{
+					tail = tail->prev;
+					delete tail->next;
+				}
+				delete head;
 
-	// 			this->m_size = initial_size;
-	// 		}
+				this->m_size = initial_size;
+
+				head = new Node;
+				tail = new Node;
+
+				head->next = tail;
+				head->prev = nullptr;
+				tail->prev = head;
+				tail->next = nullptr;
+			}
 
 			/// Checks if the array is empty.
 			bool empty( )

@@ -166,7 +166,7 @@ int main( void )
 
         std::cout << ">>> Passed!\n\n";
     }
-/*
+
     {
         std::cout << ">>> Unit teste #" << ++n_unit << ": clear().\n";
         sc::list<int> seq { 1, 2, 3, 4, 5 };
@@ -180,7 +180,7 @@ int main( void )
 
         std::cout << ">>> Passed!\n\n";
     }
-
+/*
     {
         std::cout << ">>> Unit teste #" << ++n_unit << ": push_front().\n";
 
