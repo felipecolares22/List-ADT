@@ -358,11 +358,19 @@ namespace sc{
 	// 		/// Operator== overload for vectors comparison
 	// 		bool operator==( const list& rhs )
 	// 		{
-	// 			if( this->m_size == rhs.size() )
+	// 			if( m_size == rhs.size() )
 	// 			{
-	// 				for(int i=0; i<(int)this->m_size; i++)
+	// 				node* temp;
+	// 				temp = rhs.head->next;
+	// 				tail = head->next;
+	// 				for( size_type i{0u} ; i < m_size ; i++ )
 	// 				{
-	// 					if(this->arr[i] != rhs.arr[i]) return false;
+	// 					if(tail->data != temp->data) return false;
+	// 					else
+	// 					{
+	// 						tail = tail->next;
+	// 						temp = temp->next;
+	// 					}
 	// 				}
 	// 				return true;
 	// 			}
@@ -374,9 +382,17 @@ namespace sc{
 	// 		{
 	// 			if( this->m_size == rhs.size() )
 	// 			{
+	// 				node* temp;
+	// 				temp = rhs.head->next;
+	// 				tail = head->next;
 	// 				for(int i=0; i<(int)this->m_size; i++)
 	// 				{
-	// 					if(this->arr[i] != rhs.arr[i]) return true;
+	// 					if(tail->data != temp->data) return true;
+	// 					else
+	// 					{
+	// 						tail = tail->next;
+	// 						temp = temp->next;
+	// 					}
 	// 				}
 	// 				return false;
 	// 			}
