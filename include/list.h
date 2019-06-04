@@ -2,6 +2,7 @@
 #define LIST_H
 
 #include <iostream>
+#include <iterator>
 #include <stdexcept>
 
 /*! \namespace sc
@@ -72,63 +73,64 @@ namespace sc{
 				fast->next = tail;
 			}
 			
-	// 		/// Constructor with elements in [first, last) range.
-	// 		template< typename InputIt >
-	// 		list( InputIt first, InputIt last )
-	// 			: m_capacity{(size_type)(last - first)}, m_size{(size_type)(last - first)}, head{new Node}, tail{head}
-	// 		{
-	// 			while(first != last)
-	// 			{
-	// 				tail->next = new Node;
-	// 				tail->next->prev = tail;
-	// 				tail = tail->next
-	// 				tail->next = nullptr;
-	// 				tail->data = *(first++);
-	// 			}
-	// 			tail->next = new Node;
-	// 			tail->next->prev = tail;
-	// 			tail = tail->next;
-	// 			tail->next = nullptr;
-	// 		}
+			/// Constructor with elements in [first, last) range.
+			template< typename InputIt >
+			list( InputIt first, InputIt last )
+				: m_size{(size_type)(last - first)}, head{new Node}, tail{new Node}
+			{
+				while(first != last)
+				{
+					tail->next = new Node;
+					tail->next->prev = tail;
+					tail->data = *(first++);
+					tail = tail->next;
+					tail->next = nullptr;
+				}
+			}
 
-	// 		/// Copy constructor.
-	// 		list( const list& other )
-	// 			: m_capacity{other.capacity()}, m_size{other.size()}, head{new Node}, tail{head}
-	// 		{
-	// 			Node* temp;
-	// 			temp = &other;
-	// 			for( size_type i{0u} ; i <= m_size ; i++ )
-	// 			{
-	// 				tail->next = new Node;
-	// 				tail->next->prev = tail;
-	// 				tail = tail->next;
-	// 				tail->next = nullptr;
-	// 				tail->data = temp->data;
-	// 				temp = temp->next;
-	// 			}
-	// 			tail->next = new Node;
-	// 			tail->next->prev = tail;
-	// 			tail = tail->next;
-	// 			tail->next = nullptr;
-	// 		}
+			/// Copy constructor.
+			list( const list& other )
+				: m_size{other.size()}, head{new Node}, tail{ new Node }
+			{
+				head->prev = nullptr;
+				tail->next = nullptr;
 
-	// 		/// std::initializer_list copy constructor.
-	// 		list( std::initializer_list<T> ilist )
-	// 			: m_capacity{ilist.size()}, m_size{ilist.size()}, head{new Node}, tail{head}
-	// 		{
-	// 			for( size_type i{0u} ; i <= m_size ; i++ )
-	// 			{
-	// 					tail->next = new Node;
-	// 					tail->next->prev = tail;
-	// 					tail = tail->next;
-	// 					tail->next = nullptr;
-	// 					tail->data = ilist[i];
-	// 			}
-	// 			tail->next = new Node;
-	// 			tail->next->prev = tail;
-	// 			tail = tail->next;
-	// 			tail->next = nullptr;
-	// 		}
+				Node * otherTemp = other.head->next;
+				Node * temp = head;
+				for( size_type i{0u} ; i < m_size ; i++ )
+				{
+					Node * newNode = new Node;
+					temp->next = newNode;
+					newNode->prev = temp;
+
+					newNode->data = otherTemp->data;
+
+					otherTemp = otherTemp->next;
+					temp = temp->next;
+				}
+
+				temp->next = tail;
+				tail->prev = temp;
+			}
+
+			/// std::initializer_list copy constructor.
+			list( std::initializer_list<T> ilist )
+				: m_size{ilist.size()}, head{new Node}, tail{new Node}
+			{
+				head->prev = nullptr;
+				tail->next = nullptr;
+				head->next = tail;
+				tail->prev = head;
+
+				for( const T& e : ilist )
+				{
+						tail->next = new Node;
+						tail->next->prev = tail;
+						tail->data = e;
+						tail = tail->next;
+						tail->next = nullptr;
+				}
+			}
 
 			/// Destructor.
 			~list( )
@@ -141,20 +143,20 @@ namespace sc{
 				delete head;
 			}
 
-	// 		//=== Iterators
-	// 		/// Returns an iterator pointing to the first item in the list.
-	// 		my_iterator begin()
-	// 		{
-	// 			my_iterator iter(head);
-	// 			return iter;
-	// 		}
+			//=== Iterators
+			/// Returns an iterator pointing to the first item in the list.
+			my_iterator begin()
+			{
+				my_iterator iter(head->next);
+				return iter;
+			}
 
-	// 		/// Returns a iterator pointing to the position just after the last item in the list.
-	// 		my_iterator end()
-	// 		{
-	// 			my_iterator iter(tail);
-	// 			return iter;
-	// 		}
+			/// Returns a iterator pointing to the position just after the last item in the list.
+			my_iterator end()
+			{
+				my_iterator iter(tail);
+				return iter;
+			}
 
 	// 		/// Returns a constant iterator pointing to the first element of the list.
 	// 		my_iterator cbegin() const
@@ -521,101 +523,111 @@ namespace sc{
 	// 		}
 			
 		
-	// 	// public:
+		// public:
 
-	// 	// /*! \class my_iterator
+		/*! \class my_iterator
 			
-	// 	// 	With this class we're trying to implement an iterator class for vectors.
-	// 	// */
-	// 	// class my_iterator{
-	// 	// 	private:
-	// 	// 		T * it; //!< Iterator pointer
-	// 	// 		typedef my_iterator iterator; 
+			With this class we're trying to implement an iterator class for vectors.
+		*/
+		class my_iterator{
+			private:
+				Node * it; //!< Iterator pointer
+				typedef my_iterator iterator; 
 
-	// 	// 	public:
-	// 	// 		//=== Alias
-	// 	// 		typedef size_t size_type; //!< Type of size.
+			public:
+				//=== Alias
+				// typedef size_t size_type; //!< Type of size.
 				
-	// 	// 		//=== Constructor
-	// 	// 		my_iterator(T* it)
-	// 	// 			:it{it}
-	// 	// 		{/*empty*/}
+				//=== Constructor
+				my_iterator(Node * it)
+					: it{it}
+				{/*empty*/}
 
-	// 	// 		//=== Destructor
-	// 	// 		~my_iterator()
-	// 	// 		{/*empty*/}
+				//=== Destructor
+				~my_iterator()
+				{/*empty*/}
 
-				
 
-	// 	// 	public:
-	// 	// 		//=== Operators
-	// 	// 		iterator operator++(void)
-	// 	// 		{ return iterator( ++it ); }
+			public:
+				//=== Operators
+				iterator operator++(void)
+				{ 
+					it = it->next;
+					return iterator( it ); 
+				}
 
-	// 	// 		iterator operator++(int)
-	// 	// 		{ 
-	// 	// 			iterator temp( it );
-	// 	// 			it++;
-	// 	// 			return temp;
-	// 	// 		}
+				iterator operator++(int)
+				{ 
+					iterator temp( it );
+					it = it->next;
+					return temp;
+				}
 
-	// 	// 		T& operator*()
-	// 	// 		{ return *it; }
+				T operator*()
+				{ return it->data; }
 
-	// 	// 		iterator operator--(void)
-	// 	// 		{ return iterator( --it ); }
+				iterator operator--(void)
+				{ 
+					it = it->prev;
+					return iterator( it ); 
+				}
 
-	// 	// 		iterator operator--(int)
-	// 	// 		{
-	// 	// 			iterator temp( it );
-	// 	// 			it--;
-	// 	// 			return temp;
-	// 	// 		}
+				iterator operator--(int)
+				{
+					iterator temp( it );
+					it = it->prev;
+					return temp;
+				}
 
-	// 	// 		friend iterator operator+(int n, iterator it)
-	// 	// 		{
-	// 	// 			for( int i = 0 ; i < n ; i++ )
-	// 	// 				it++;
-	// 	// 			return iterator( it );
-	// 	// 		}
+				friend iterator operator+(int n, iterator it)
+				{
+					for( int i = 0 ; i < n ; i++ )
+						it = it->next;
+					return iterator( it );
+				}
 
-	// 	// 		friend iterator operator+(iterator it, int n)
-	// 	// 		{
-	// 	// 			for( int i = 0 ; i < n ; i++ )
-	// 	// 				it++;
-	// 	// 			return iterator( it );
-	// 	// 		}
+				friend iterator operator+(iterator it, int n)
+				{
+					for( int i = 0 ; i < n ; i++ )
+						it = it->next;
+					return iterator( it );
+				}
 
-	// 	// 		friend iterator operator-(int n, iterator it)
-	// 	// 		{
-	// 	// 			for( int i = 0 ; i < n ; i++ )
-	// 	// 				it--;
-	// 	// 			return iterator( it );
-	// 	// 		}
+				// friend size_type operator+(iterator it1, iterator it2)
+				// {
+				// 	return it1.it + it2.it;
+				// }
 
-	// 	// 		friend iterator operator-(iterator it, int n)
-	// 	// 		{
-	// 	// 			for( int i = 0 ; i < n ; i++ )
-	// 	// 				it--;
-	// 	// 			return iterator( it );
-	// 	// 		}
+				friend iterator operator-(int n, iterator it)
+				{
+					for( int i = 0 ; i < n ; i++ )
+						it = it->prev;
+					return iterator( it );
+				}
 
-	// 	// 		friend size_type operator-(iterator it1, iterator it2)
-	// 	// 		{
-	// 	// 			return it1.it - it2.it;
-	// 	// 		}
+				friend iterator operator-(iterator it, int n)
+				{
+					for( int i = 0 ; i < n ; i++ )
+						it = it->prev;
+					return iterator( it );
+				}
 
-	// 	// 		iterator operator->()
-	// 	// 		{
-	// 	// 			return iterator( it );
-	// 	// 		}
+				// friend size_type operator-(iterator it1, iterator it2)
+				// {
+				// 	return it1.it - it2.it;
+				// }
 
-	// 	// 		bool operator==( const iterator& it2) const
-	// 	// 		{ return it == it2.it; }
+				Node * operator->()
+				{
+					return it;
+				}
 
-	// 	// 		bool operator!=( const iterator& it2) const
-	// 	// 		{ return it != it2.it; }
-	// 	// }; // class my_iterator
+				bool operator==( const iterator& it2) const
+				{ return it == it2.it; }
+
+				bool operator!=( const iterator& it2) const
+				{ return it != it2.it; }
+		}; // class my_iterator
 		
 
 	// 	// ! \class my_constiterator

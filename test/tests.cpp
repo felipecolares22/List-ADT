@@ -30,7 +30,7 @@ int main( void )
         assert( seq.empty() == false );
         std::cout << ">>> Passed!\n\n";
     }
-    /*
+    
     // Unit #3: initializer list constructor
     {
         std::cout << ">>> Unit teste #" << ++n_unit << ": initializer list constructor.\n";
@@ -45,7 +45,7 @@ int main( void )
 
         std::cout << ">>> Passed!\n\n";
     }
-
+/*
     // Unit #5: range constructor
     {
         std::cout << ">>> Unit teste #" << ++n_unit << ": range constructor.\n";
@@ -60,8 +60,8 @@ int main( void )
             assert ( e == i++ );
 
         // Copy only part of the original range.
-        sc::list<int> vec3( std::next( seq.begin(), 1 ), std::next( seq.begin(), 3 ) );
-        auto it2 = std::next( seq.begin(), 1 );
+        sc::list<int> vec3( seq.begin() + 1 , seq.begin() + 3  );
+        auto it2 = seq.begin() + 1 ;
         for ( auto it = vec3.begin() ; it != vec3.end() ; ++it, ++it2 )
             assert( *it == *it2 );
 
@@ -82,7 +82,7 @@ int main( void )
             assert ( e == i++ );
 
         // Changing seq (the original)...
-        auto it = std::next( seq.begin(), 2 );
+        auto it = seq.begin() + 2 ;
         *it = 10;
         // ... should not alter the copy.
         i = 1;
@@ -382,7 +382,7 @@ int main( void )
 
         // In the middle
         seq1 = seq2;
-        seq1.insert( std::next( seq1.begin(), 2 ), source.begin(), source.end() );
+        seq1.insert( seq1.begin() + 2 , source.begin(), source.end() );
         std::cout << ">>> Seq1 == " << seq1 << std::endl;
         std::cout << ">>> seq1 size is: " << seq1.size() << '\n';
         assert( seq1 == ( sc::list<int>{ 1, 2, 6, 7, 8, 9, 10, 3, 4, 5 } ) );
@@ -413,7 +413,7 @@ int main( void )
 
         // In the middle
         seq1 = seq2;
-        seq1.insert( std::next( seq1.begin(), 2 ), { 6, 7, 8, 9, 10 } );
+        seq1.insert( seq1.begin() + 2 , { 6, 7, 8, 9, 10 } );
         assert( seq1 == ( sc::list<int>{ 1, 2, 6, 7, 8, 9, 10, 3, 4, 5 } ) );
 
         // At the end
@@ -460,21 +460,21 @@ int main( void )
         sc::list<int> seq { 1, 2, 3, 4, 5 };
 
         // removing a segment from the beginning.
-        auto past_last = seq.erase( seq.begin(), std::next(seq.begin(),3) );
+        auto past_last = seq.erase( seq.begin(), seq.begin()+3 );
         assert( seq.begin() == past_last );
         assert( seq == ( sc::list<int>{ 4, 5 } ) );
         assert( seq.size() == 2 );
 
         // removing at the middle.
         seq = { 1, 2, 3, 4, 5 };
-        past_last = seq.erase( std::next(seq.begin(),1), std::next(seq.begin(),4) );
-        assert( std::next(seq.begin(),1) == past_last );
+        past_last = seq.erase( seq.begin()+1, seq.begin()+4 );
+        assert( seq.begin()+1 == past_last );
         assert( seq == ( sc::list<int>{ 1, 5 } ) );
         assert( seq.size() == 2 );
 
         // removing a segment that reached the end.
         seq = { 1, 2, 3, 4, 5 };
-        past_last = seq.erase( std::next(seq.begin(),2), seq.end() );
+        past_last = seq.erase( seq.begin()+2, seq.end() );
         assert( seq.end() == past_last );
         assert( seq == ( sc::list<int>{ 1, 2 } ) );
         assert( seq.size() == 2 );
@@ -502,14 +502,14 @@ int main( void )
 
         // removing a single element in the middle.
         seq = { 1, 2, 3, 4, 5 };
-        past_last = seq.erase( std::next(seq.begin(),2) );
+        past_last = seq.erase( seq.begin()+2 );
         assert( seq == ( sc::list<int>{ 1, 2, 4, 5 } ) );
-        assert( std::next(seq.begin(),2) == past_last );
+        assert( seq.begin()+2 == past_last );
         assert( seq.size() == 4 );
 
         // removing a single element at the end.
         seq = { 1, 2, 3, 4, 5 };
-        past_last = seq.erase( std::next(seq.begin(),seq.size()-1 ) );
+        past_last = seq.erase( seq.begin() + seq.size() - 1 );
         assert( seq == ( sc::list<int>{ 1, 2, 3, 4 } ) );
         assert( seq.end() == past_last );
         assert( seq.size() == 4 );
