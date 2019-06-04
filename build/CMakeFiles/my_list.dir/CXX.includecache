@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/list.h
+iostream
+-
+stdexcept
+-
+
+/home/matheus/Documents/bti/EDB1Codes/projetos/List-ADT/test/tests.cpp
+iostream
+-
+cassert
+-
+list.h
+/home/matheus/Documents/bti/EDB1Codes/projetos/List-ADT/test/list.h
+
