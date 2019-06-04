@@ -654,6 +654,7 @@ namespace sc{
 
 				bool operator!=( const iterator& it2) const
 				{ return it != it2.it; }
+
 		}; // class my_iterator
 		
 
