@@ -109,7 +109,7 @@ int main( void )
         std::cout << ">>> Passed!\n\n";
     }
 #endif
-/*
+
     // Unit: Assign operator.
     {
         std::cout << ">>> Unit teste #" << ++n_unit << ": assign operator.\n";
@@ -150,7 +150,7 @@ int main( void )
         std::cout << ">>> Passed!\n\n";
     }
 #endif
-
+/*
     {
         std::cout << ">>> Unit teste #" << ++n_unit << ": initializer list assignment.\n";
         sc::list<int> seq = { 1, 2, 3, 4, 5 };

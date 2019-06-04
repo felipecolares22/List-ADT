@@ -265,16 +265,16 @@ namespace sc{
 	// 			return head->next->data;
 	// 		}
 
-	// 		/// Replaces the content of the list with copies of value.
-	// 		void assign( const T & value )
-	// 		{
-	// 			tail = head->next;
-	// 			for( size_type i{0u} ; i<m_size ; i++ )
-	// 			{
-	// 				tail->data = value;
-	// 				tail = tail->next;
-	// 			}
-	// 		}
+			// /// Replaces the content of the list with copies of value.
+			// void assign( const T & value )
+			// {
+			// 	tail = head->next;
+			// 	for( size_type i{0u} ; i<m_size ; i++ )
+			// 	{
+			// 		tail->data = value;
+			// 		tail = tail->next;
+			// 	}
+			// }
 
 	// 		/// Return the object at the index position.
 	// 		T & operator[]( size_type pos )
@@ -325,40 +325,49 @@ namespace sc{
 	// 				arr[i] = aux[i];
 	// 		}			
 
-	// 	public:
-	// 		//=== Operators overload
-	// 		/// Operator= overload for vectors
-	// 		list& operator=( const list& other )
-	// 		{
-	// 			if( m_size != initial_size )
-	// 				delete arr;
+			//=== Operators overload
+			/// Operator= overload for vectors
+			list& operator=( const list& other )
+			{
+				Node * fast = head->next;
+				Node * otherTemp = other.head->next;
+				for( size_type i{0u} ; i < other.size() ; i++ )
+				{
+					if( fast == tail )
+					{
+						tail->next = new Node;
+						tail->next->prev = tail;
+						tail = tail->next;
+						tail->next = nullptr;
+					}
 
-	// 			this->m_capacity = other.capacity();
-	// 			this->m_size = other.size();
-	// 			this->arr = new T[m_capacity];
+					fast->data = otherTemp->data;
+					
+					fast = fast->next;
+					otherTemp = otherTemp->next;
+				}
 
-	// 			for( size_type i{0u} ; i < m_size ; i++ )
-	// 				arr[i] = other.arr[i];
+				this->m_size = other.size();
 
-	// 			return *this;
-	// 		}
+				return *this;
+			}
 
-	// 		/// Operator= overload for initializer_list
-	// 		list& operator=( std::initializer_list<T> ilist )
-	// 		{
-	// 			if( m_size != initial_size )
-	// 				delete arr;
+			// /// Operator= overload for initializer_list
+			// list& operator=( std::initializer_list<T> ilist )
+			// {
+			// 	if( m_size != initial_size )
+			// 		delete arr;
 
-	// 			this->m_capacity = ilist.size() * 2;
-	// 			this->m_size = ilist.size();
-	// 			this->arr = new T[m_capacity];
+			// 	this->m_capacity = ilist.size() * 2;
+			// 	this->m_size = ilist.size();
+			// 	this->arr = new T[m_capacity];
 
-	// 			size_type count{0};
-	// 			for( const T& e : ilist )
-	// 				arr[count++] = e;
+			// 	size_type count{0};
+			// 	for( const T& e : ilist )
+			// 		arr[count++] = e;
 
-	// 			return *this;
-	// 		}
+			// 	return *this;
+			// }
 
 	// 		/// Operator== overload for vectors comparison
 	// 		bool operator==( const list& rhs )
