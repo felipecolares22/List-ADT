@@ -261,17 +261,17 @@ namespace sc{
 				m_size--;
 			}
 
-	// 		/// Returns the object at the end of the list.
-	// 		const T & back( ) const
-	// 		{
-	// 			return tail->prev->data;
-	// 		}
+			/// Returns the object at the end of the list.
+			const T & back( ) const
+			{
+				return tail->prev->data;
+			}
 
-	// 		/// Returns the object at the beginning of the list.
-	// 		const T & front( ) const
-	// 		{
-	// 			return head->next->data;
-	// 		}
+			/// Returns the object at the beginning of the list.
+			const T & front( ) const
+			{
+				return head->next->data;
+			}
 
 			// /// Replaces the content of the list with copies of value.
 			// void assign( const T & value )
