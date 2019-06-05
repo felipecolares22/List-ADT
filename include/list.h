@@ -209,49 +209,39 @@ namespace sc{
 			bool empty( )
 			{return m_size == 0;}
 			
-	// 		/// Adds value to the front of the list.
-	// 		void push_front( const T & value )
-	// 		{
-	// 			if( m_size == m_capacity )
-	// 			{
-	// 				if( m_capacity != 0 )
-	// 					reserve( m_capacity * 2 );
-	// 				else
-	// 					reserve( 1 );
-	// 			}
+			/// Adds value to the front of the list.
+			void push_front( const T & value )
+			{
+				head->data = value;
+				head->prev = new Node;
+				head->prev->next = head;
+				head = head->prev;
+				head->prev = nullptr;
+				m_size++;
+			}
 
-	// 			head->data = value;
-	// 			head->prev = new Node;
-	// 			head->prev->next = head;
-	// 			head = head->prev;
-	// 			head->prev = nullptr;
-	// 			m_size++;
-	// 		}
-
-	// 		/// Adds value to the end of the list.
-	// 		void push_back( const T & value )
-	// 		{
-	// 			if( m_size == m_capacity )
-	// 			{
-	// 				if( m_capacity != 0 )
-	// 					reserve( m_capacity * 2 );
-	// 				else
-	// 					reserve( 1 );
-	// 			}
-				
-	// 			tail->data = value;
-	// 			tail->next = new Node;
-	// 			tail->next->prev = tail;
-	// 			tail = tail->next;
-	// 			tail->next = nullptr;
-	// 			m_size++;
-	// 		}
+			/// Adds value to the end of the list.
+			void push_back( const T & value )
+			{	
+				tail->data = value;
+				tail->next = new Node;
+				tail->next->prev = tail;
+				tail = tail->next;
+				tail->next = nullptr;
+				m_size++;
+			}
 			
-	// 		/// Removes the object at the end of the list.
-	// 		void pop_back( )
-	// 		{
-	// 			m_size--;
-	// 		}
+			/// Removes the object at the end of the list.
+			void pop_back( )
+			{
+				Node * target = tail->prev;
+				tail->prev = target->prev;
+				tail->prev->next = tail;
+
+				delete target;
+
+				m_size--;
+			}
 
 	// 		/// Removes the object at the front of the list.
 	// 		void pop_front( )
@@ -637,11 +627,6 @@ namespace sc{
 						it = it->next;
 					return iterator( it );
 				}
-
-				// friend size_type operator+(iterator it1, iterator it2)
-				// {
-				// 	return it1.it + it2.it;
-				// }
 
 				friend iterator operator-(int n, iterator it)
 				{
