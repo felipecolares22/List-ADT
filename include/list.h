@@ -491,33 +491,43 @@ namespace sc{
 				return pos;
 			}
 
-	// 		/// Removes the object at position pos. Returns an iterator to the element that follows pos before the call.
-	// 		my_iterator erase( my_iterator pos )
-	// 		{
-	// 			size_type posi = pos - arr;
-	// 			for( size_type i{posi} ; i < m_size ; i++ )
-	// 			{
-	// 				arr[i-1] = arr[i];
-	// 			}
+			/// Removes the object at position pos. Returns an iterator to the element that follows pos before the call.
+			my_iterator erase( my_iterator pos )
+			{
+				Node * target = pos.getIt();
+				pos++;
 
-	// 			m_size--;
+				target->next->prev = target->prev;
+				target->prev->next = target->next;
 
-	// 			return my_iterator( &arr[posi-1] );
-	// 		}
+				delete target;
 
-	// 		/// Removes elements in the range [first; last).
-	// 		my_iterator erase( my_iterator first, my_iterator last )
-	// 		{
-	// 			size_type range_size = last - first;
-	// 			size_type posi = first - arr;
+				m_size--;
 
-	// 			for( size_type i{posi} ; i < m_size - range_size ; i++ )
-	// 			{
-	// 				arr[i-1] = arr[i-1+range_size];
-	// 			}
+				return pos;
+			}
 
-	// 			return my_iterator( &arr[posi] );
-	// 		}
+			/// Removes elements in the range [first; last).
+			my_iterator erase( my_iterator ifirst, my_iterator ilast )
+			{
+				Node * first = ifirst.getIt();
+				Node * last = ilast.getIt();
+
+				while( first != last )
+				{
+					Node * target = first;
+					first = first->next;
+
+					first->prev = target->prev;
+					target->prev->next = first;
+
+					delete target;
+
+					m_size--;
+				}
+
+				return last;
+			}
 
 	// 		/// Replaces the contents with count copies of value value.
 	// 		template< typename InItr >
@@ -556,6 +566,7 @@ namespace sc{
 	// 				arr[count++] = e;
 	// 		}
 			
+			// gift hahaha
 			friend std::ostream& operator<<(std::ostream& os, const list& lf)
 			{
 				Node * temp = lf.head->next;

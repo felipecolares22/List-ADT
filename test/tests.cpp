@@ -454,7 +454,7 @@ int main( void )
         std::cout << ">>> Passed!\n\n";
     }
 #endif
-    /*
+
     {
         std::cout << ">>> Unit teste #" << ++n_unit << ": erase(first, last) and erase(pos).\n";
 
@@ -489,6 +489,7 @@ int main( void )
 
         std::cout << ">>> Passed!\n\n";
     }
+
     {
         std::cout << ">>> Unit teste #" << ++n_unit << ": erase(pos).\n";
 
@@ -518,6 +519,6 @@ int main( void )
 
         std::cout << ">>> Passed!\n\n";
     }
-*/
+
     return 0;
 }
