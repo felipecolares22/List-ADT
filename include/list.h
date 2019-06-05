@@ -428,79 +428,68 @@ namespace sc{
 				else return true;
 			}
 
-	// 		//=== Operations
-	// 		/// Adds value into the list before pos. Returns an iterator to the position of the inserted item.
-	// 		my_iterator insert ( my_iterator pos, const T & value )
-	// 		{
-	// 			list<T> aux = *this;
-	// 			size_type range_size = 1; 
-	// 			size_type posi = pos - arr;
-	// 			size_type total_size = (size_type)(m_size + range_size);
+			//=== Operations
+			/// Adds value into the list before pos. Returns an iterator to the position of the inserted item.
+			my_iterator insert ( my_iterator pos, const T & value )
+			{
+				Node * temp = pos.getIt();
+				Node * newNode = new Node;
 
-	// 			reserve( total_size );
+				newNode->data = value;
+				newNode->next = temp;
+				newNode->prev = temp->prev;
+				temp->prev = newNode;
+				newNode->prev->next = newNode;
 
-	// 			for( size_type i = m_size ; i >= posi ; i-- )
-	// 			{
-	// 				arr[i+range_size] = arr[i];
-	// 			}
-				
-	// 			arr[posi] = value;
+				m_size++;
 
-	// 			m_size = total_size;
+				return pos;
+			}
 
-	// 			return pos;
-	// 		}
+			///inserts elements from the range [first; last) before pos.
+			template< typename InItr >
+			my_iterator insert( my_iterator pos, InItr first, InItr last )
+			{
+				Node * it = pos.getIt();
+				Node * fast = it;
+				fast = fast->prev;
 
-	// 		///inserts elements from the range [first; last) before pos.
-	// 		template< typename InItr >
-	// 		my_iterator insert( my_iterator pos, InItr first, InItr last )
-	// 		{
-	// 			list<T> aux = *this;
-	// 			size_type range_size = last-first; 
-	// 			size_type posi = pos - arr;
-	// 			size_type total_size = (size_type)(m_size + range_size);
+				while( first != last )
+				{
+					fast->next = new Node;
+					fast->next->data = *(first++);
+					fast->next->prev = fast;
+					fast = fast->next;
+					m_size++;
+				}
 
-	// 			reserve( total_size );
+				fast->next = it;
+				it->prev = fast;
 
-	// 			for( size_type i = m_size ; i >= posi ; i-- )
-	// 			{
-	// 				arr[i+range_size] = arr[i];
-	// 			}
-				
-	// 			while( first != last )
-	// 			{
-	// 				arr[posi++] = *(first++);
-	// 			}
+				return pos;
+			}
 
-	// 			m_size = total_size;
+			/// Inserts elements from the initializer list ilist before pos.
+			my_iterator insert( my_iterator pos, std::initializer_list< T > ilist )
+			{
+				Node * it = pos.getIt();
+				Node * fast = it;
+				fast = fast->prev;
 
-	// 			return pos;
-	// 		}
+				for( const T& e : ilist )
+				{
+					fast->next = new Node;
+					fast->next->data = e;
+					fast->next->prev = fast;
+					fast = fast->next;
+					m_size++;
+				}
 
-	// 		/// Inserts elements from the initializer list ilist before pos.
-	// 		my_iterator insert( my_iterator pos, std::initializer_list< T > ilist )
-	// 		{
-	// 			list<T> aux = *this;
-	// 			size_type range_size = ilist.size(); 
-	// 			size_type posi = pos - arr;
-	// 			size_type total_size = (size_type)(m_size + range_size);
+				fast->next = it;
+				it->prev = fast;
 
-	// 			reserve( total_size );
-
-	// 			for( size_type i = m_size ; i >= posi ; i-- )
-	// 			{
-	// 				arr[i+range_size] = arr[i];
-	// 			}
-				
-	// 			for( const T& e : ilist )
-	// 			{
-	// 				arr[posi++] = e;
-	// 			}
-
-	// 			m_size = total_size;
-
-	// 			return pos;
-	// 		}
+				return pos;
+			}
 
 	// 		/// Removes the object at position pos. Returns an iterator to the element that follows pos before the call.
 	// 		my_iterator erase( my_iterator pos )
@@ -567,8 +556,22 @@ namespace sc{
 	// 				arr[count++] = e;
 	// 		}
 			
-		
-		// public:
+			friend std::ostream& operator<<(std::ostream& os, const list& lf)
+			{
+				Node * temp = lf.head->next;
+			    os << "[ ";
+			    for( size_type i{0u} ; i < lf.size() ; i++ )
+			    {
+			        os << temp->data << " ";
+			        temp = temp->next;
+			    }
+			    os << "]";
+
+			    return os;
+			}	
+
+
+	public:
 
 		/*! \class my_iterator
 			
@@ -591,7 +594,6 @@ namespace sc{
 				//=== Destructor
 				~my_iterator()
 				{/*empty*/}
-
 
 			public:
 				//=== Operators
@@ -673,6 +675,9 @@ namespace sc{
 
 				bool operator!=( const iterator& it2) const
 				{ return it != it2.it; }
+
+				Node * getIt()
+				{ return it; }
 
 		}; // class my_iterator
 		
