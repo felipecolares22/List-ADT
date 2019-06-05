@@ -163,19 +163,19 @@ namespace sc{
 				return iter;
 			}
 
-	// 		/// Returns a constant iterator pointing to the first element of the list.
-	// 		my_iterator cbegin() const
-	// 		{
-	// 			my_const_iterator iter(head);
-	// 			return iter;
-	// 		}
+			/// Returns a constant iterator pointing to the first element of the list.
+			const my_iterator cbegin() const
+			{
+				my_const_iterator iter(head->next);
+				return iter;
+			}
 
-	// 		/// Returns a constant iterator pointing to the position just after the last element of the list.
-	// 		my_iterator cend() const
-	// 		{
-	// 			my_const_iterator iter(tail);
-	// 			return iter;
-	// 		}
+			/// Returns a constant iterator pointing to the position just after the last element of the list.
+			const my_iterator cend() const
+			{
+				my_const_iterator iter(tail);
+				return iter;
+			}
 
 
 	// 	public:
@@ -273,16 +273,16 @@ namespace sc{
 				return head->next->data;
 			}
 
-			// /// Replaces the content of the list with copies of value.
-			// void assign( const T & value )
-			// {
-			// 	tail = head->next;
-			// 	for( size_type i{0u} ; i<m_size ; i++ )
-			// 	{
-			// 		tail->data = value;
-			// 		tail = tail->next;
-			// 	}
-			// }
+			/// Replaces the content of the list with copies of value.
+			void assign( const T & value )
+			{
+				Node * fast = head->next;
+				for( size_type i{0u} ; i<m_size ; i++ )
+				{
+					fast->data = value;
+					fast = fast->next;
+				}
+			}
 
 	// 		/// Return the object at the index position.
 	// 		T & operator[]( size_type pos )
@@ -699,94 +699,108 @@ namespace sc{
 		
 
 
-	// 	// class my_const_iterator{
-	// 	// 	private:
-	// 	// 		const T * it; //!< Iterator pointer
-	// 	// 		typedef my_const_iterator iterator; 
+		class my_const_iterator{
+			private:
+				const Node * it; //!< Iterator pointer
+				typedef my_const_iterator iterator; 
 
-	// 	// 	public:
-	// 	// 		//=== Alias
-	// 	// 		typedef size_t size_type; //!< Type of size.
+			public:
+				//=== Alias
+				// typedef size_t size_type; //!< Type of size.
 				
-	// 	// 		//=== Constructor
-	// 	// 		my_const_iterator(T* it)
-	// 	// 			:it{it}
-	// 	// 		{/*empty*/}
+				//=== Constructor
+				my_const_iterator(Node * it)
+					: it{it}
+				{/*empty*/}
 
-	// 	// 		//=== Destructor
-	// 	// 		~my_const_iterator()
-	// 	// 		{/*empty*/}
+				//=== Destructor
+				~my_const_iterator()
+				{/*empty*/}
 
-				
+			public:
+				//=== Operators
+				iterator operator++(void)
+				{ 
+					it = it->next;
+					return iterator( it ); 
+				}
 
-	// 	// 	public:
-	// 	// 		//=== Operators
-	// 	// 		const iterator operator++(void)
-	// 	// 		{ return iterator( ++it ); }
+				iterator operator++(int)
+				{ 
+					iterator temp( it );
+					it = it->next;
+					return temp;
+				}
 
-	// 	// 		const iterator operator++(int)
-	// 	// 		{ 
-	// 	// 			iterator temp( it );
-	// 	// 			it++;
-	// 	// 			return temp;
-	// 	// 		}
+				T operator*()
+				{ return it->data; }
 
-	// 	// 		const T& operator*()
-	// 	// 		{ return *it; }
+				iterator operator--(void)
+				{ 
+					it = it->prev;
+					return iterator( it ); 
+				}
 
-	// 	// 		const iterator operator--(void)
-	// 	// 		{ return iterator( --it ); }
+				iterator operator--(int)
+				{
+					iterator temp( it );
+					it = it->prev;
+					return temp;
+				}
 
-	// 	// 		const iterator operator--(int)
-	// 	// 		{
-	// 	// 			iterator temp( it );
-	// 	// 			it--;
-	// 	// 			return temp;
-	// 	// 		}
+				friend iterator operator+(int n, iterator it)
+				{
+					for( int i = 0 ; i < n ; i++ )
+						it = it->next;
+					return iterator( it );
+				}
 
-	// 	// 		friend const iterator operator+(int n, iterator it)
-	// 	// 		{
-	// 	// 			for( int i = 0 ; i < n ; i++ )
-	// 	// 				it++;
-	// 	// 			return iterator( it );
-	// 	// 		}
+				friend iterator operator+(iterator it, int n)
+				{
+					for( int i = 0 ; i < n ; i++ )
+						it = it->next;
+					return iterator( it );
+				}
 
-	// 	// 		friend const iterator operator+(iterator it, int n)
-	// 	// 		{
-	// 	// 			for( int i = 0 ; i < n ; i++ )
-	// 	// 				it++;
-	// 	// 			return iterator( it );
-	// 	// 		}
+				friend iterator operator-(int n, iterator it)
+				{
+					for( int i = 0 ; i < n ; i++ )
+						it = it->prev;
+					return iterator( it );
+				}
 
-	// 	// 		friend const iterator operator-(int n, iterator it)
-	// 	// 		{
-	// 	// 			for( int i = 0 ; i < n ; i++ )
-	// 	// 				it--;
-	// 	// 			return iterator( it );
-	// 	// 		}
+				friend iterator operator-(iterator it, int n)
+				{
+					for( int i = 0 ; i < n ; i++ )
+						it = it->prev;
+					return iterator( it );
+				}
 
-	// 	// 		friend const iterator operator-(iterator it, int n)
-	// 	// 		{
-	// 	// 			for( int i = 0 ; i < n ; i++ )
-	// 	// 				it--;
-	// 	// 			return iterator( it );
-	// 	// 		}
+				friend size_type operator-(iterator it1, iterator it2)
+				{
+					size_t count = 0;
+					while( it2 != it1 )
+					{
+						count++;
+						it2++;
+					}
+					return count;
+				}
 
-	// 	// 		friend const size_type operator-(iterator it1, iterator it2)
-	// 	// 		{
-	// 	// 			return it1.it - it2.it;
-	// 	// 		}
+				Node * operator->()
+				{
+					return it;
+				}
 
-	// 	// 		const iterator operator->()
-	// 	// 		{
-	// 	// 			return iterator( it );
-	// 	// 		}
-	// 	// 		const bool operator==( const iterator& it2) const
-	// 	// 		{ return it == it2.it; }
+				bool operator==( const iterator& it2) const
+				{ return it == it2.it; }
 
-	// 	// 		const bool operator!=( const iterator& it2) const
-	// 	// 		{ return it != it2.it; }
-	// 	// }; // class my_iterator
+				bool operator!=( const iterator& it2) const
+				{ return it != it2.it; }
+
+				Node * getIt()
+				{ return it; }
+		}; // class my_const_iterator
 		
 	}; // class list
 
