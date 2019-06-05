@@ -284,20 +284,33 @@ namespace sc{
 				}
 			}
 
-			// /// Return the object at the index position.
-			// T & operator[]( size_type pos )
-			// { return arr[pos]; }
+			/// Return the object at the index position.
+			T & operator[]( size_type pos )
+			{ 
+				if( pos >= m_size )
+					return nullptr;
 
-			// /// Returns the object at the index pos in the array.
-			// T & at( size_type pos )
-			// {
-			// 	if( not (pos < m_size and pos >= 0) )
-			// 		throw std::out_of_range("error in at(): out of range");
-			// 	else
-			// 	{
-			// 		return m_size();
-			// 	}
-			// }		
+				Node * fast = head->next;
+				for( size_type i{0u} ; i < pos ; i++ )
+					fast = fast->next;
+
+				return fast->data;
+			}
+
+			/// Returns the object at the index pos in the array.
+			T & at( size_type pos )
+			{
+				if( not (pos < m_size and pos >= 0) )
+					throw std::out_of_range("error in at(): out of range");
+				else
+				{
+					Node * fast = head->next;
+					for( size_type i{0u} ; i < pos ; i++ )
+						fast = fast->next;
+
+					return fast->data;
+				}
+			}		
 
 			//=== Operators overload
 			/// Operator= overload for vectors
