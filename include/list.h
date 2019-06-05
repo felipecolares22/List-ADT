@@ -284,54 +284,20 @@ namespace sc{
 				}
 			}
 
-	// 		/// Return the object at the index position.
-	// 		T & operator[]( size_type pos )
-	// 		{ return arr[pos]; }
+			// /// Return the object at the index position.
+			// T & operator[]( size_type pos )
+			// { return arr[pos]; }
 
-	// 		/// Returns the object at the index pos in the array.
-	// 		T & at( size_type pos )
-	// 		{
-	// 			if( not (pos < m_size and pos >= 0) )
-	// 				throw std::out_of_range("error in at(): out of range");
-	// 			else
-	// 				return arr[pos];
-	// 		}
-
-	// 		/// Return the capacity of array.
-	// 		size_type capacity( ) const
-	// 		{return m_capacity;}
-
-	// 		/// Realoc the storage to new_cap
-	// 		void reserve( size_type new_cap )
-	// 		{
-	// 			if( new_cap <= m_capacity )
-	// 				return;
-
-	// 			list<T> aux = *this;
-
-	// 			delete arr;
-	// 			this->m_capacity = new_cap;
-	// 			this->arr = new T[m_capacity];
-
-	// 			for( size_type i{0u} ; i < m_size ; i++ )
-	// 				arr[i] = aux[i];
-	// 		}
-
-	// 		/// Desaloc unused storage
-	// 		void shrink_to_fit( )
-	// 		{
-	// 			if( m_size == m_capacity )
-	// 				return;
-
-	// 			list<T> aux = *this;
-				
-	// 			delete arr;
-	// 			this->m_capacity = m_size;
-	// 			this->arr = new T[m_capacity];
-
-	// 			for( size_type i{0u} ; i < m_size ; i++ )
-	// 				arr[i] = aux[i];
-	// 		}			
+			// /// Returns the object at the index pos in the array.
+			// T & at( size_type pos )
+			// {
+			// 	if( not (pos < m_size and pos >= 0) )
+			// 		throw std::out_of_range("error in at(): out of range");
+			// 	else
+			// 	{
+			// 		return m_size();
+			// 	}
+			// }		
 
 			//=== Operators overload
 			/// Operator= overload for vectors
@@ -529,42 +495,33 @@ namespace sc{
 				return last;
 			}
 
-	// 		/// Replaces the contents with count copies of value value.
-	// 		template< typename InItr >
-	// 		void assign( InItr first, InItr last )
-	// 		{
-	// 			size_type range_size = last-first;
+			/// Replaces the contents with count copies of value value.
+			template< typename InItr >
+			void assign( InItr first, InItr last )
+			{
+				Node * fast = head->next;
 
-	// 			if( range_size > m_capacity ){
-	// 				reserve( range_size );
-	// 				this->m_capacity = range_size;
-	// 			}
+				while( first != last and fast != tail )
+				{
+					fast->data = *(first++);
+					fast = fast->next;
+				}
+			}
 
-	// 			delete arr;
-	// 			this->m_size = range_size;
-	// 			this->arr = new T[m_capacity];
+			/// Replaces the contents of the list with copies of the elements in the range [first; last).
+			void assign( std::initializer_list< T > ilist )
+			{
+				Node * fast = head->next;
 
-	// 			size_type count{0u};
-	// 			while( first != last )
-	// 				arr[count++] = *(first++);
-	// 		}
+				for( const T& e : ilist )
+				{
+					if( fast == tail )
+						break;
 
-	// 		/// Replaces the contents of the list with copies of the elements in the range [first; last).
-	// 		void assign( std::initializer_list< T > ilist )
-	// 		{
-	// 			if( ilist.size() > m_capacity ){
-	// 				reserve( ilist.size() );
-	// 				this->m_capacity = ilist.size();
-	// 			}
-
-	// 			delete arr;
-	// 			this->m_size = ilist.size();
-	// 			this->arr = new T[m_capacity];
-
-	// 			size_type count{0u};
-	// 			for( const T& e : ilist )
-	// 				arr[count++] = e;
-	// 		}
+					fast->data = e;
+					fast = fast->next;
+				}
+			}
 			
 			// gift hahaha
 			friend std::ostream& operator<<(std::ostream& os, const list& lf)
