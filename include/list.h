@@ -234,6 +234,9 @@ namespace sc{
 			/// Removes the object at the end of the list.
 			void pop_back( )
 			{
+				if(m_size == 0)
+					return;
+
 				Node * target = tail->prev;
 				tail->prev = target->prev;
 				tail->prev->next = tail;
@@ -243,13 +246,20 @@ namespace sc{
 				m_size--;
 			}
 
-	// 		/// Removes the object at the front of the list.
-	// 		void pop_front( )
-	// 		{
-	// 			head = head->next;
-	// 			delete head->prev;
-	// 			m_size--;
-	// 		}
+			/// Removes the object at the front of the list.
+			void pop_front( )
+			{
+				if(m_size == 0)
+					return;
+
+				Node * target = head->next;
+				head->next = target->next;
+				target->next->prev = head;
+
+				delete target;
+
+				m_size--;
+			}
 
 	// 		/// Returns the object at the end of the list.
 	// 		const T & back( ) const
