@@ -318,7 +318,6 @@ int main( void )
         std::cout << ">>> Passed!\n\n";
     }
 
-/*
     {
         std::cout << ">>> Unit teste #" << ++n_unit << ": operator==().\n";
 
@@ -352,6 +351,7 @@ int main( void )
 
         std::cout << ">>> Passed!\n\n";
     }
+/*
 
     {
         std::cout << ">>> Unit teste #" << ++n_unit << ": insert(pos, value).\n";
